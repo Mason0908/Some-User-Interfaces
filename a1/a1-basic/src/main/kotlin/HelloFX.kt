@@ -298,6 +298,7 @@ class HelloFX : Application() {
             else{
                 createNote(result)
             }
+            darkCover.isVisible = false
             addWindow.close()
         }
         val closeAddButton = Button("Cancel")
