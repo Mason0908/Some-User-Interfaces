@@ -13,25 +13,24 @@ import javafx.stage.StageStyle
 import kotlin.random.Random
 
 class HelloFX : Application() {
-    // Create Notes section
     private var stage: Stage = Stage()
-    private var showImportantOnly = false
     private val centralSection = TilePane()
-    private val importantNotes = mutableListOf<String>()
-    private var activeNotesId: MutableList<String> = mutableListOf()
-    private var noteIdCounter = 0
-    private var totalNotes = 0
-    private var visibleNotes = 0
+    private var selectedNote = StackPane()
+    private var selected = false
+    private val deleteButton = Button("Delete")
+    private val clearButton = Button("Clear")
     private val currStatus1 = Label("0")
     private val currStatus2 = Label("")
     private val searchBox = TextField()
-    private var selected = false
-    private var selectedNote = StackPane()
-    private val deleteButton = Button("Delete")
-    private val clearButton = Button("Clear")
     private val darkCover = Region()
+    private var activeNotesId: MutableList<String> = mutableListOf()
+    private val importantNotes = mutableListOf<String>()
+    private var showImportantOnly = false
+    private var noteIdCounter = 0
+    private var totalNotes = 0
+    private var visibleNotes = 0
 
-    val words = listOf<String>("lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit",
+    private val words = listOf("lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit",
         "sed", "molestie", "nisi", "vitae", "semper", "mattis", "in", "convallis", "sem", "nec", "placerat",
         "ac", "rhoncus", "sapien", "blandit", "fusce", "tincidunt", "vehicula", "massa", "vulputate", "gravida",
         "pellentesque", "ante", "dui", "lacinia", "condimentum", "mauris", "faucibus", "neque", "mauris",
@@ -44,6 +43,12 @@ class HelloFX : Application() {
         "nisl", "volutpat", "duis", "risus", "lobortis", "eleifend", "ut", "turpis", "proin", "libero", "finibus", "tellus")
 
 
+    /**
+     * Function for generating random text for random notes
+     *
+     * @author Mason ma
+     * @return List<String>
+     */
     private fun generateRandomNote(): List<String> {
         var title = ""
         var body = ""
@@ -92,13 +97,24 @@ class HelloFX : Application() {
         // Generate Importance
         val importance = Random.nextInt(1,6) == 1
         if (importance){
-            return listOf<String>(title, body, "important")
+            return listOf(title, body, "important")
         }
         else{
-            return listOf<String>(title, body, "unimportant")
+            return listOf(title, body, "unimportant")
         }
     }
 
+    /**
+     * Function used to create a new note
+     *
+     * @author Mason Ma
+     * @return void
+     * @params
+     * info: Information for creating the notes. First value is title, Second value
+     *       is body, and the third value is importance
+     * isEditing: Indicate if currently is editing the note or not
+     * noteId: If currently is editing, indicate which note id is being edited
+     */
     private fun createNote(info: List<String>, isEditing: Boolean = false, noteId: String = ""){
         val currNote = StackPane()
         val title = Label(info[0])
@@ -117,6 +133,7 @@ class HelloFX : Application() {
         }
         currNote.setMinSize(150.0,200.0)
         currNote.setMaxSize(150.0,200.0)
+        // If not in editing mode, directly add a new node to centralSection
         if (!isEditing){
             noteIdCounter++
             currNote.id = noteIdCounter.toString()
@@ -142,6 +159,7 @@ class HelloFX : Application() {
             currStatus2.text = "Added Note #${currNote.id}"
             centralSection.children.add(currNote)
         }
+        // If is in editing mode, replace the previous node with the new node
         else{
             for (i in 0 until centralSection.children.size){
                 if (noteId == centralSection.children[i].id){
@@ -175,10 +193,11 @@ class HelloFX : Application() {
                     importantNotes.remove(currNote.id)
                 }
             }
-
         }
+        // Add a mouse click event listener to each note created
         currNote.setOnMouseClicked {
             if (it.button.equals(MouseButton.PRIMARY)){
+                // Handle select event
                 if (it.clickCount == 1){
                     if (selectedNote != currNote){
                         currNote.border = Border(BorderStroke(Color.BLUEVIOLET, BorderStrokeStyle.SOLID, null,null))
@@ -197,11 +216,13 @@ class HelloFX : Application() {
                         currStatus2.text = ""
                     }
                 }
+                // Handle edit event
                 if (it.clickCount == 2){
                     showAddNoteWindow(isEditing = true, noteId = currNote.id, title = info[0], body = info[1], importance = info[2]=="important")
                 }
             }
         }
+        // Add event listener to each node's isManaged property to handle visibility of notes
         currNote.managedProperty().addListener { observable, oldValue, newValue ->
             if (oldValue){
                 visibleNotes--
@@ -216,11 +237,21 @@ class HelloFX : Application() {
                 currStatus1.text = "$visibleNotes (of $totalNotes)"
             }
             clearButton.isDisable = visibleNotes==0
-
         }
-
     }
 
+    /**
+     * Function to show the add note window
+     *
+     * @author Mason Ma
+     * @return void
+     * @params
+     * isEditing: Indicate if currently is editing the note or not
+     * noteId: If currently is editing, indicate which note id is being edited
+     * title: If currently is editing, indicate the title of note before edited
+     * body: If currently is editing, indicate the body of note before edited
+     * importance: If currently is editing, indicate the importance of note before edited
+     */
     private fun showAddNoteWindow(isEditing: Boolean = false, noteId: String = "",
                                   title: String = "", body: String = "", importance: Boolean = false){
         val addWindow = Stage()
@@ -313,45 +344,54 @@ class HelloFX : Application() {
         saveAndCloseButtons.alignment = Pos.CENTER_RIGHT
         saveAndCloseButtons.padding = Insets(0.0, 10.0, 5.0, 10.0)
 
+        // Wrapper for the whole window contents
         val addWindowContents = VBox()
-
         addWindowContents.children.addAll(headerSection, titleSection, bodySection, importanceSection, saveAndCloseButtons)
         addWindowContents.alignment = Pos.TOP_LEFT
         addWindowContents.spacing = 10.0
         val addWindowScene = Scene(addWindowContents, 350.0, 300.0)
-
         addWindow.scene = addWindowScene
         addWindow.initModality(Modality.APPLICATION_MODAL)
         //Centralize the window
         addWindow.x = stage.x + (stage.width-350)/2
         addWindow.y = stage.y + (stage.height-300)/2
         addWindow.initStyle(StageStyle.UNDECORATED)
-
         darkCover.isVisible = true
+
         addWindow.showAndWait()
     }
+
+    /**
+     * Main function
+     *
+     * @author Mason Ma
+     * @return void
+     * @param stage: the stage of main application
+     */
 
     override fun start(stage: Stage) {
         this.stage = stage
         // Create toolbar buttons
         val addButton = Button("Add")
+        // Event Listener when add button is clicked
         addButton.setOnAction {
             showAddNoteWindow()
-            println("Add Button clicked")
         }
         addButton.setPrefSize(100.0, 30.0)
         addButton.setMinSize(50.0, 30.0)
 
         val randomButton = Button("Random")
+        // Event Listener when random button is clicked
         randomButton.setOnAction {
             val currRandomNotes = generateRandomNote()
             createNote(currRandomNotes)
-            println("Random Button clicked")
         }
         randomButton.setPrefSize(100.0, 30.0)
         randomButton.setMinSize(50.0, 30.0)
 
         deleteButton.isDisable = true
+        // Event Listener when delete button is clicked
+
         deleteButton.setOnAction {
             if (selected){
                 centralSection.children.removeIf { it.id == selectedNote.id }
@@ -365,6 +405,7 @@ class HelloFX : Application() {
         deleteButton.setMinSize(50.0, 30.0)
 
         clearButton.isDisable = visibleNotes==0
+        // Event Listener when clear button is clicked
         clearButton.setOnAction {
             val preNum = totalNotes
             centralSection.children.removeIf { it.isVisible && it.isManaged }
@@ -380,6 +421,7 @@ class HelloFX : Application() {
         // Add search text field
         searchBox.prefWidth(150.0)
 
+        // Event Listener when text is changed in search box
         searchBox.setOnKeyTyped {
             for (i in centralSection.children){
                 i.isVisible = false
@@ -407,7 +449,7 @@ class HelloFX : Application() {
                 }
             }
         }
-
+        // Event Listener when ! button is clicked
         importantButton.setOnAction {
             if (showImportantOnly){
                 showImportantOnly = false
@@ -498,6 +540,7 @@ class HelloFX : Application() {
         stage.minWidth = 400.0
         stage.show()
 
+        // Add change listener for Notes
         centralSection.children.addListener(ListChangeListener {
             if (centralSection.children.size > totalNotes){
                 totalNotes++

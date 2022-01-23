@@ -4,7 +4,6 @@ import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.*
-import javafx.scene.input.DataFormat
 import javafx.scene.input.MouseButton
 import javafx.scene.input.TransferMode
 import javafx.scene.layout.*
@@ -15,25 +14,25 @@ import javafx.stage.StageStyle
 import kotlin.random.Random
 
 class HelloFX : Application() {
-    // Create Notes section
     private var stage: Stage = Stage()
-    private var showImportantOnly = false
     private val centralSection = TilePane()
-    private val importantNotes = mutableListOf<String>()
-    private var activeNotesId: MutableList<String> = mutableListOf()
-    private var noteIdCounter = 0
-    private var totalNotes = 0
-    private var visibleNotes = 0
+    private var selectedNote = StackPane()
+    private var selected = false
+    private val deleteButton = Button("Delete")
+    private val clearButton = Button("Clear")
     private val currStatus1 = Label("0")
     private val currStatus2 = Label("")
     private val searchBox = TextField()
-    private var selected = false
-    private var selectedNote = StackPane()
-    private val deleteButton = Button("Delete")
-    private val clearButton = Button("Clear")
     private val darkCover = Region()
+    private var activeNotesId: MutableList<String> = mutableListOf()
+    private val importantNotes = mutableListOf<String>()
+    private var showImportantOnly = false
+    private var noteIdCounter = 0
+    private var totalNotes = 0
+    private var visibleNotes = 0
 
-    val words = listOf<String>("lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit",
+
+    private val words = listOf("lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit",
         "sed", "molestie", "nisi", "vitae", "semper", "mattis", "in", "convallis", "sem", "nec", "placerat",
         "ac", "rhoncus", "sapien", "blandit", "fusce", "tincidunt", "vehicula", "massa", "vulputate", "gravida",
         "pellentesque", "ante", "dui", "lacinia", "condimentum", "mauris", "faucibus", "neque", "mauris",
