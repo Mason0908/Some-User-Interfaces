@@ -125,6 +125,7 @@ class HelloFX : Application() {
         currNote.children.add(noteContent)
         currNote.alignment = Pos.TOP_LEFT
         currNote.padding = Insets(10.0)
+
         if (info[2] == "important"){
             currNote.background = Background(BackgroundFill(Color.LIGHTYELLOW, CornerRadii.EMPTY, Insets.EMPTY))
         }
@@ -210,6 +211,7 @@ class HelloFX : Application() {
                     }
                     else{
                         currNote.border = null
+
                         selected = false
                         selectedNote = StackPane()
                         deleteButton.isDisable = true
