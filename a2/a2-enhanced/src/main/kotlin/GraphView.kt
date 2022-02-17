@@ -70,7 +70,6 @@ class GraphView(
                 valueTextHover.isVisible = false
             }
             currBar.setOnMouseClicked {
-                println("here")
                 if (!valueTextClick.isVisible){
                     valueTextClick.isVisible = true
                     valueTextHover.isVisible = false

@@ -26,6 +26,10 @@ class GraphView(
     private val graphHolder = Group()
     private val graphRectangle = Rectangle(width - 100.0,height - 100.0)
 
+
+    /**
+     * @Description Helper function that draws the actual graph
+     */
     private fun draw(){
         val numBars = model.currDataSet?.data?.size ?: 10
         graphHolder.children.removeIf { graphHolder.children.indexOf(it) >= 5 }
@@ -54,9 +58,11 @@ class GraphView(
         maxValue.text = max(model.currDataSet?.data).toString()
         // draw actual graphs
         draw()
+        // Graph should adjust based on window width
         graphRectangle.widthProperty().addListener { event ->
             draw()
         }
+        // Graph should adjust based on window height
         graphRectangle.heightProperty().addListener { event ->
             draw()
         }
@@ -84,7 +90,7 @@ class GraphView(
         bottomContent.padding = Insets(10.0)
 
 
-        // Draw Graph
+        // Draw Graph framework
         graphRectangle.fill = Color.TRANSPARENT
         graphRectangle.stroke = Color.LIGHTGREY
 

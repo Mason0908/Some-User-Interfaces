@@ -1,4 +1,3 @@
-import javafx.scene.paint.Color
 import kotlin.random.Random
 
 class Model {
@@ -27,6 +26,7 @@ class Model {
         }
     }
 
+    // Map for storing all existing datasets
     var dataSets: MutableMap<String, DataSet?> = mutableMapOf(
         "Increasing" to createTestDataSet("Increasing"),
         "Large" to createTestDataSet("Large"),
@@ -36,6 +36,7 @@ class Model {
         "Percentage" to createTestDataSet("Percentage")
         )
 
+    // Current selected dataset
     var currDataSet = dataSets["Increasing"]
         set(value) {
             field = value
@@ -44,23 +45,30 @@ class Model {
             yAxis = value?.yAxis ?: ""
         }
 
+    // Change current dataset and notify all views
     fun changeDataSet(name: String){
         currDataSet = dataSets[name]
         selectedBars.clear()
         notifyObservers()
     }
+
+    // title for current dataset
     var title: String = currDataSet?.title ?: ""
         set(value) {
             field = value
             currDataSet?.title = value
             notifyObservers()
         }
+
+    // X-Axis for current dataset
     var xAxis: String = currDataSet?.xAxis ?: ""
         set(value) {
             field = value
             currDataSet?.xAxis = value
             notifyObservers()
         }
+
+    // Y-Axis for current dataset
     var yAxis: String = currDataSet?.yAxis ?: ""
         set(value) {
             field = value
@@ -68,11 +76,13 @@ class Model {
             notifyObservers()
         }
 
+    // Change a specific value in current dataset
     fun changeDataSetValue(index: Int, value: Int){
         currDataSet?.data?.set(index, value)
         notifyObservers()
     }
 
+    // Array that store all random words
     private val WORDS = """
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent scelerisque
             tortor in tellus elementum dictum. Vivamus dignissim rutrum nibh pellentesque
@@ -134,6 +144,7 @@ class Model {
         .split(" ")// make a list, then an array
         .toTypedArray()
 
+    // Generate a random title
     private fun generateRandomTitle(): String{
         var title = ""
         var randomWord = ""
@@ -150,26 +161,32 @@ class Model {
         return title
     }
 
-    private fun generateRandomXAxis(): String{
+    // Generate a random Axis label
+    private fun generateRandomAxis(): String{
         val randomIndex = Random.nextInt(WORDS.size)
         return WORDS[randomIndex]
     }
 
+    // Counter for new created dataset
     private var _idCounter = 0
+
+    // Add a new dataset
     fun addNewDataSet(numPoints: Int){
         val dataSetName = "New${_idCounter++.toString()}"
         val title = generateRandomTitle()
-        val xAxis = generateRandomXAxis()
+        val xAxis = generateRandomAxis()
+        val yAxis = generateRandomAxis()
         val data = mutableListOf<Int>()
         for (i in 1..numPoints){
             data.add(Random.nextInt(0,101))
         }
-        val newDataSet = DataSet(title, xAxis, "value", data)
+        val newDataSet = DataSet(title, xAxis, yAxis, data)
         dataSets[dataSetName] = newDataSet
         currDataSet = newDataSet
         notifyObservers()
     }
 
+    // current selected bars
     val selectedBars = mutableListOf<Int>()
 
 }
