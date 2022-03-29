@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/navigation"
+            app:startDestination="@id/fragment1">
+
+    <fragment
+            android:id="@+id/fragment1"
+            android:name="com.example.Note.NoteBoard"
+            android:label="fragment1"
+            tools:layout="@layout/fragment_note_board">
+        <action
+                android:id="@+id/action_f1_to_f2"
+                app:destination="@id/fragment2"/>
+        <action
+            android:id="@+id/action_fragment1_to_viewNote"
+            app:destination="@id/viewNote" />
+    </fragment>
+    <fragment
+            android:id="@+id/fragment2"
+            android:name="com.example.Note.AddNote"
+            android:label="fragment2"
+            tools:layout="@layout/fragment_add_note">
+        <action
+            android:id="@+id/action_fragment2_to_fragment1"
+            app:destination="@id/fragment1"
+            app:popUpTo="@id/navigation" />
+        <action
+            android:id="@+id/action_fragment2_to_viewNote"
+            app:destination="@id/viewNote"
+            app:popUpTo="@id/viewNote"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/viewNote"
+        android:name="com.example.Note.ViewNote"
+        android:label="ViewNote" >
+        <action
+            android:id="@+id/action_viewNote_to_fragment2"
+            app:destination="@id/fragment2" />
+    </fragment>
+</navigation>
